@@ -16,6 +16,34 @@ class Twing
       regist_initializer
     end
 
+    def parse
+      argv = @setting_loader.init(ARGV)
+
+      raise SettingFileNotFound if @setting.size.zero?
+
+      load_plugins
+      @initializer.init(argv)
+
+      cli_options = @initializer.options
+      setting = Hashie::Mash.new @setting.merge(cli_options)
+      options = @setting.reduce({}) do |acc, (k, v)|
+        key = k.to_sym
+        acc[key] = v unless cli_options.keys.include?(key)
+        acc
+      end
+      @initializer.call(options, setting)
+
+      setting
+    end
+
+    private
+
+    def load_plugins
+      if @setting&.require.is_a?(Array)
+        @setting.require.each { |file| require file }
+      end
+    end
+
     def regist_setting_loader
       @setting_loader.add(:help, '-h', '--help', 'help') do
         puts @setting_loader.optparse.help
@@ -41,23 +69,6 @@ class Twing
       @initializer.add(:worker, '--worker', 'start worker') do
         @app.mode = :worker
       end
-    end
-
-    def parse
-      argv = @setting_loader.init(ARGV)
-      @initializer.init(argv)
-      cli_options = @initializer.options
-      raise SettingFileNotFound if @setting.size.zero?
-      setting = Hashie::Mash.new @setting.merge(cli_options)
-
-      options = @setting.reduce({}) do |acc, (k, v)|
-        key = k.to_sym
-        acc[key] = v unless cli_options.keys.include?(key)
-        acc
-      end
-      @initializer.call(options, setting)
-
-      setting
     end
   end
 end
