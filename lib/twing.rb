@@ -11,7 +11,7 @@ class Twing
   LOGGER_FORMAT = '%Y-%m-%d %H:%M:%S.%L '
 
   attr_accessor :logger, :mode
-  attr_reader :receivers, :cli, :setting
+  attr_reader :receivers, :cli, :setting, :client
 
   def initialize
     @mode = :standalone
@@ -21,7 +21,8 @@ class Twing
     @setting = @cli.parse
     @receivers.init(self)
     @logger.debug("load plugins: #{@receivers.receivers}")
-    @client = Twitter::REST::Client.new(setting.twitter)
+    @client = Twitter::REST::Client.new(setting.twitter.api_key)
+    after_init
   end
 
   def start
@@ -35,6 +36,11 @@ class Twing
       #{backtrace.shift}: #{ex.message} (#{ex.class})
       #{backtrace.join("\n")}
     EOF
+  end
+
+  def pouring(tweet_id)
+    obj = client.status(tweet_id)
+    publish(obj)
   end
 
   private
@@ -67,8 +73,6 @@ class Twing
       sleep 1
     end
   end
-
-  # デバッガを作る
 
   def publish(data)
     logger.debug("Message #{data}")

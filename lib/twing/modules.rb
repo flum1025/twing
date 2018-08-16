@@ -12,6 +12,10 @@ class Twing
       def on_init(&block)
         self.callbacks.add(:init, &block)
       end
+
+      def after_init(&block)
+        self.callbacks.add(:after_init, &block)
+      end
     end
 
     def self.included(klass)
@@ -20,6 +24,12 @@ class Twing
 
     def init_modules
       self.class.callbacks.run(:init) do |callback|
+        callback.call(self)
+      end
+    end
+
+    def after_init
+      self.class.callbacks.run(:after_init) do |callback|
         callback.call(self)
       end
     end

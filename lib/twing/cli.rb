@@ -70,6 +70,12 @@ class Twing
       @initializer.add(:worker, '--worker', 'start worker') do
         @app.mode = :worker
       end
+      @initializer.add(:pouring, '-p', '--pouring VALUES', 'direct pouring tweet') do |v|
+        Twing.after_init do |app|
+          app.pouring(v)
+          exit
+        end
+      end
     end
   end
 end

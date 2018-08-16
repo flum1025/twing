@@ -23,7 +23,12 @@ class Twing
       left
     rescue OptionParser::InvalidOption => e
       raise e unless @pre
-      init(argv, left + e.args)
+      e.args.each do |arg|
+        next_item = argv[argv.index(arg) + 1]
+        left += e.args
+        left << next_item if !next_item.nil? && !next_item.start_with?(?-)
+      end
+      init(argv, left)
     end
 
     def call(options, root_options = options)
