@@ -2,7 +2,10 @@ require 'optparse'
 
 class Twing
   class Initializer
-    def initialize
+    attr_reader :options
+
+    def initialize(pre = false)
+      @pre = pre
       @optparse = OptionParser.new
       @options = {}
       @callbacks = {}
@@ -13,10 +16,13 @@ class Twing
       @callbacks[key] = block if block
     end
 
-    def init
-      @optparse.parse!(ARGV)
+    def init(argv = ARGV, left = [])
+      @optparse.parse(argv - left)
       call(@options)
-      @options
+      left
+    rescue OptionParser::InvalidOption => e
+      raise e unless @pre
+      init(argv, left + e.args)
     end
 
     def call(options, root_options = options)

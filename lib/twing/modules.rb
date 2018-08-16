@@ -1,3 +1,5 @@
+require 'twing/utility/callback'
+
 class Twing
   module Modules
     module Extend
@@ -12,9 +14,9 @@ class Twing
       end
 
       def load_modules
-        Dir.glob(File.join(SOURCE_PATH, '**', 'init.rb')).each do |file|
-          require file
-        end
+        # Dir.glob(File.join(SOURCE_PATH, '**', 'init.rb')).each do |file|
+        #   require file
+        # end
       end
     end
 

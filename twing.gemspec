@@ -23,6 +23,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'pry'
   spec.add_dependency 'twitter'
-  spec.add_dependency 'twitter-stream-patch'
   spec.add_dependency 'hashie'
 end

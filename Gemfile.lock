@@ -4,7 +4,6 @@ PATH
     twing (0.1.0)
       hashie
       twitter
-      twitter-stream-patch
 
 GEM
   remote: https://rubygems.org/
@@ -50,8 +49,6 @@ GEM
       memoizable (~> 0.4.2)
       naught (~> 1.1)
       simple_oauth (~> 0.3.1)
-    twitter-stream-patch (0.1.0)
-      twitter (~> 6.1.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)

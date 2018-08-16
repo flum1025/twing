@@ -1,10 +1,9 @@
-require 'bundler'
-Bundler.require
+require 'logger'
+require 'twitter'
 require 'twing/version'
 require 'twing/modules'
 require 'twing/receivers'
 require 'twing/cli'
-require 'twing/utility/callback'
 
 class Twing
   include Modules
