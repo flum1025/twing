@@ -1,28 +1,28 @@
 
-lib = File.expand_path("../lib", __FILE__)
+lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "twing/version"
+require 'twing/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "twing"
+  spec.name          = 'twing'
   spec.version       = Twing::VERSION
-  spec.authors       = ["flum1025"]
-  spec.email         = ["flum.1025@gmail.com"]
-  spec.summary       = ""
+  spec.authors       = ['flum1025']
+  spec.email         = ['flum.1025@gmail.com']
+  spec.summary       = ''
   spec.description   = spec.summary
-  spec.homepage      = "https://github.com/flum1025/twing"
-  spec.license       = "MIT"
+  spec.homepage      = 'https://github.com/flum1025/twing'
+  spec.license       = 'MIT'
   spec.files         = Dir.chdir(File.expand_path('..', __FILE__)) do
     `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   end
-  spec.bindir        = "exe"
+  spec.bindir        = 'exe'
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  spec.require_paths = ['lib']
 
-  spec.add_development_dependency "bundler", "~> 1.16"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "pry"
-  spec.add_dependency "twitter"
-  spec.add_dependency "twitter-stream-patch"
-  spec.add_dependency "hashie"
+  spec.add_development_dependency 'bundler', '~> 1.16'
+  spec.add_development_dependency 'rake', '~> 10.0'
+  spec.add_development_dependency 'pry'
+  spec.add_dependency 'twitter'
+  spec.add_dependency 'twitter-stream-patch'
+  spec.add_dependency 'hashie'
 end
