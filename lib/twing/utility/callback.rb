@@ -1,4 +1,6 @@
 class Callback
+  attr_reader :callbacks
+
   def initialize
     @callbacks = Hash.new{|hash, key| hash[key] = []}
   end

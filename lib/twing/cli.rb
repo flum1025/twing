@@ -22,6 +22,7 @@ class Twing
       raise SettingFileNotFound if @setting.size.zero?
 
       load_plugins
+      @app.init_modules
       @initializer.init(argv)
 
       cli_options = @initializer.options

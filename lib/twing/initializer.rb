@@ -2,11 +2,12 @@ require 'optparse'
 
 class Twing
   class Initializer
-    attr_reader :options
+    attr_reader :optparse, :options
 
     def initialize(pre = false)
       @pre = pre
       @optparse = OptionParser.new
+      @optparse.version = Twing::VERSION
       @options = {}
       @callbacks = {}
     end

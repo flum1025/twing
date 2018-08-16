@@ -1,4 +1,4 @@
-require_relative 'twing/utility/logger'
+require 'twing/utility/logger'
 
 class Twing
   module Modules

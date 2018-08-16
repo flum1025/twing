@@ -18,7 +18,6 @@ class Twing
     @logger = Logger.new(STDOUT, datetime_format: LOGGER_FORMAT)
     @receivers = Receivers.new
     @cli = Cli.new(self)
-    init_modules
     @setting = @cli.parse
     @receivers.init(self)
     @logger.debug("load plugins: #{@receivers.receivers}")
