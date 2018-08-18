@@ -10,6 +10,21 @@ Pluginable Twitter Application
 
     $ twing -s setting.yml
 
+```shell
+$ bundle exec twing -s ./setting.yml --user --help
+Usage: twing [options]
+    -h, --help                       help
+    -s, --setting VALUES             setting file path
+    -d, --debug                      debug mode
+        --log-dir VALUES             log dir
+        --home-timeline              start streamer with home_timeline
+        --filter                     start streamer with filter
+        --user                       start streamer with user
+        --worker                     start worker
+        --standalone                 standalone mode
+    -p, --pouring VALUES             direct pouring tweet
+```
+
 ### Configuration File
 
 Configuration file is YAML format file.

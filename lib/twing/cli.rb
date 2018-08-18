@@ -59,9 +59,9 @@ class Twing
     def regist_initializer
       @initializer.add(:debug, '-d', '--debug', 'debug mode')
       @initializer.add(:log_dir, '--log-dir VALUES', 'log dir')
-      @initializer.add(:home_timeline, '--home-timeline', 'start streamer by home_timeline')
-      @initializer.add(:filter, '--filter', 'start streamer by filter')
-      @initializer.add(:user, '--user', 'start streamer by user')
+      @initializer.add(:home_timeline, '--home-timeline', 'start streamer with home_timeline')
+      @initializer.add(:filter, '--filter', 'start streamer with filter')
+      @initializer.add(:user, '--user', 'start streamer with user')
       @initializer.add(:worker, '--worker', 'start worker')
       @initializer.add(:standalone, '--standalone', 'standalone mode')
       @initializer.add(:pouring, '-p', '--pouring VALUES', 'direct pouring tweet') do |v|
