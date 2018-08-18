@@ -11,7 +11,7 @@ Pluginable Twitter Application
     $ twing -s setting.yml
 
 ```shell
-$ bundle exec twing -s ./setting.yml --user --help
+$ bundle exec twing -s ./setting.yml --help
 Usage: twing [options]
     -h, --help                       help
     -s, --setting VALUES             setting file path
