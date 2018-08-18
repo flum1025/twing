@@ -4,29 +4,34 @@ require 'twing/version'
 require 'twing/modules'
 require 'twing/receivers'
 require 'twing/cli'
+require 'twing/operating_mode'
 
 class Twing
   include Modules
+  include OperatingMode
 
   LOGGER_FORMAT = '%Y-%m-%d %H:%M:%S.%L '
 
-  attr_accessor :logger, :mode
-  attr_reader :receivers, :cli, :setting, :client
+  attr_accessor :logger
+  attr_reader :receivers, :cli, :setting, :rest_client, :stream_client
 
   def initialize
-    @mode = :standalone
-    @logger = Logger.new(STDOUT, datetime_format: LOGGER_FORMAT)
     @receivers = Receivers.new
     @cli = Cli.new(self)
     @setting = @cli.parse
+    @logger = generate_logger
     @receivers.init(self)
+
     @logger.debug("load plugins: #{@receivers.receivers}")
-    @client = Twitter::REST::Client.new(setting.twitter.api_key)
+
+    @rest_client = Twitter::REST::Client.new(setting.twitter.api_key)
+    @stream_client = Twitter::Streaming::Client.new(setting.twitter.api_key)
     after_init
   end
 
   def start
-    logger.info("start mode=#{mode}")
+    raise ArgumentError, 'mode is empty' if mode.nil?
+    logger.info("start mode=#{mode} standalone=#{setting.standalone}")
     send(mode)
   rescue Interrupt, SignalException
     # do nothing
@@ -38,44 +43,32 @@ class Twing
     EOF
   end
 
-  def pouring(tweet_id)
-    obj = client.status(tweet_id)
-    publish(obj)
-  end
-
   private
 
-  def streamer
-    options = setting.twitter.home_timeline_options.query.to_h
-    options.merge!(count: options['timeline_count'])
-
-    # loop do
-    #   timeline = @client.home_timeline()
-    # end
-  rescue Twitter::Error::TooManyRequests => e
-    sleep e.rate_limit.reset_in
-    retry
-  rescue Twitter::Error::ServerError, EOFError, Errno::EPIPE
-    sleep 1
-    retry
+  def generate_logger
+    logdev = setting.log_dir ? File.join(setting.log_dir, "#{mode}.log") : STDOUT
+    logger = Logger.new(logdev, datetime_format: LOGGER_FORMAT)
+    logger.level = setting.debug ? Logger::DEBUG : Logger::INFO
+    logger
   end
 
-  def worker
-
-  end
-
-  def standalone
-    loop do
-      publish(Twitter::Tweet.new(
-        id: 1,
-        text: 'test',
-      ))
-      sleep 1
-    end
+  def pouring(tweet_id)
+    obj = client.status(tweet_id)
+    delivery(obj)
   end
 
   def publish(data)
-    logger.debug("Message #{data}")
+    logger.debug("Message publish #{data}")
+    if setting.standalone
+      delivery(data)
+    else
+      puts "queuing"
+      #queue
+    end
+  end
+
+  def delivery(data)
+    logger.debug("Message delivery #{data}")
     @receivers.run do |receiver|
       receiver.on_message(data)
     end

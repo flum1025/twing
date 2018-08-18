@@ -57,19 +57,13 @@ class Twing
     end
 
     def regist_initializer
-      @initializer.add(:debug, '-d', '--debug', 'debug mode') do
-        @app.logger.level = Logger::DEBUG
-      end
-      @initializer.add(:log_file, '--log-file VALUES', 'log file') do |v, options|
-        @app.logger = Logger.new(v, datetime_format: LOGGER_FORMAT)
-        @app.logger.level = Logger::DEBUG if options[:debug]
-      end
-      @initializer.add(:streamer, '--streamer', 'start streamer') do
-        @app.mode = :streamer
-      end
-      @initializer.add(:worker, '--worker', 'start worker') do
-        @app.mode = :worker
-      end
+      @initializer.add(:debug, '-d', '--debug', 'debug mode')
+      @initializer.add(:log_dir, '--log-dir VALUES', 'log dir')
+      @initializer.add(:home_timeline, '--home-timeline', 'start streamer by home_timeline')
+      @initializer.add(:filter, '--filter', 'start streamer by filter')
+      @initializer.add(:user, '--user', 'start streamer by user')
+      @initializer.add(:worker, '--worker', 'start worker')
+      @initializer.add(:standalone, '--standalone', 'standalone mode')
       @initializer.add(:pouring, '-p', '--pouring VALUES', 'direct pouring tweet') do |v|
         Twing.after_init do |app|
           app.pouring(v)
