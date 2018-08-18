@@ -97,7 +97,8 @@ end
 Add values to the following section of the configuration file.
 
 ```yaml
-require: path_to_test_module.rb
+require: 
+  - path_to_test_module.rb
 ```
 
 ## Contributing
