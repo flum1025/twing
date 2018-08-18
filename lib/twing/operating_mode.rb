@@ -15,11 +15,17 @@ class Twing
 
       loop do
         logger.info('load new timeline')
-      end
 
-      # loop do
-      #   timeline = @client.home_timeline()
-      # end
+        since_id = redis.get(REDIS_KEY)
+
+        timeline = rest_client.home_timeline(
+          since_id ? options.merge(since_id: since_id) : options
+        ).each { |object| publish(object) }
+
+        redis.set(REDIS_KEY, timeline.first.id) unless timeline.first.nil?
+
+        sleep setting.twitter.home_timeline_options.interval
+      end
     rescue Twitter::Error::TooManyRequests => e
       sleep e.rate_limit.reset_in
       retry
