@@ -1,19 +1,23 @@
 require 'logger'
 require 'twitter'
+require 'redis-objects'
+require 'redis-namespace'
 require 'twing/version'
 require 'twing/modules'
 require 'twing/receivers'
 require 'twing/cli'
 require 'twing/operating_mode'
+require 'twing/queue'
 
 class Twing
   include Modules
   include OperatingMode
 
   LOGGER_FORMAT = '%Y-%m-%d %H:%M:%S.%L '
+  REDIS_KEY = 'home_timeline_streamer'
 
   attr_accessor :logger
-  attr_reader :receivers, :cli, :setting, :rest_client, :stream_client
+  attr_reader :receivers, :cli, :setting, :rest_client, :stream_client, :redis
 
   def initialize
     @receivers = Receivers.new
@@ -26,6 +30,16 @@ class Twing
 
     @rest_client = Twitter::REST::Client.new(setting.twitter.api_key)
     @stream_client = Twitter::Streaming::Client.new(setting.twitter.api_key)
+
+    unless setting.standalone
+      Redis.current = Redis::Namespace.new(
+        setting.redis.namespace,
+        :redis => Redis.new(setting.redis.config)
+      )
+      @redis = Redis.current
+      @queue = Queue.new('queue', setting.redis.namespace)
+    end
+
     after_init
   end
 
@@ -62,9 +76,30 @@ class Twing
     if setting.standalone
       delivery(data)
     else
-      puts "queuing"
-      #queue
+      body =
+        case data
+        when Twitter::Streaming::Event
+          {
+            event: object.name,
+            source: object.source.to_h,
+            target: object.target.to_h,
+            target_object: object.target_object.to_h
+          }.to_json
+        when Twitter::Streaming::FriendList
+          data.to_json
+        else
+          data.to_h.to_json
+        end
+
+      @queue.push({
+        class: data.class.to_s,
+        body: body
+      }.to_json)
     end
+  end
+
+  def queue(data)
+    redis
   end
 
   def delivery(data)

@@ -13,6 +13,10 @@ class Twing
       options = setting.twitter.home_timeline_options.query.to_h
       options.merge!(count: options['timeline_count'])
 
+      loop do
+        logger.info('load new timeline')
+      end
+
       # loop do
       #   timeline = @client.home_timeline()
       # end
@@ -25,6 +29,17 @@ class Twing
     end
 
     def worker
+      @queue.process do |msg|
+        logger.debug("Message subscribe #{msg}")
+        object = msg2object(msg)
+        delivery(object)
+      end
+    end
+
+    def msg2object(msg)
+      data = JSON.parse(msg)
+      klass = Object.const_get(data['class'])
+      klass.new(JSON.parse(data['body'], { symbolize_names: true }))
     end
 
     def user

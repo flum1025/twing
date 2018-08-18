@@ -24,4 +24,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry'
   spec.add_dependency 'twitter'
   spec.add_dependency 'hashie'
+  spec.add_dependency 'redis-objects'
+  spec.add_dependency 'redis-namespace'
 end
