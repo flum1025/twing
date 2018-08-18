@@ -8,6 +8,7 @@ require 'twing/receivers'
 require 'twing/cli'
 require 'twing/operating_mode'
 require 'twing/queue'
+require 'twing/cursor'
 
 class Twing
   include Modules
@@ -17,7 +18,7 @@ class Twing
   REDIS_KEY = 'home_timeline_streamer'
 
   attr_accessor :logger
-  attr_reader :receivers, :cli, :setting, :rest_client, :stream_client, :redis
+  attr_reader :receivers, :cli, :setting, :rest_client, :stream_client
 
   def initialize
     @receivers = Receivers.new
@@ -39,6 +40,8 @@ class Twing
       @redis = Redis.current
       @queue = Queue.new('queue', setting.redis.namespace)
     end
+
+    @cursor = Cursor.new(REDIS_KEY, !setting.standalone)
 
     after_init
   end
@@ -96,10 +99,6 @@ class Twing
         body: body
       }.to_json)
     end
-  end
-
-  def queue(data)
-    redis
   end
 
   def delivery(data)

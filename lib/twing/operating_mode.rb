@@ -16,13 +16,13 @@ class Twing
       loop do
         logger.info('load new timeline')
 
-        since_id = redis.get(REDIS_KEY)
+        since_id = @cursor.get
 
         timeline = rest_client.home_timeline(
           since_id ? options.merge(since_id: since_id) : options
         ).each { |object| publish(object) }
 
-        redis.set(REDIS_KEY, timeline.first.id) unless timeline.first.nil?
+        @cursor.set(timeline.first.id) unless timeline.first.nil?
 
         sleep setting.twitter.home_timeline_options.interval
       end
