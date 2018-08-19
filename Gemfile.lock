@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    twing (0.1.1)
+    twing (0.1.2)
       hashie
       redis-namespace
       redis-objects
