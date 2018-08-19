@@ -3,6 +3,7 @@ class Twing
     private
 
     def mode
+      return setting.mode.to_sym if setting.mode
       return :home_timeline if setting.home_timeline
       return :filter if setting.filter
       return :user if setting.user
