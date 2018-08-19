@@ -3,7 +3,7 @@ require 'twing/utility/logger'
 class Twing
   module Modules
     class Base
-      attr_reader :logger, :setting, :app
+      attr_reader :logger, :root_setting, :setting, :app
 
       def initialize(app)
         @app = app
