@@ -60,6 +60,39 @@ modules:
     module_setting: hoge
 ```
 
+### Use Docker
+
+Dockerfile
+```
+FROM ruby:2.4
+
+RUN gem install twing --no-document
+RUN gem install twing_earch --no-document # Install some plugins
+
+ENTRYPOINT ["twing"]
+```
+
+docker-compose.yml
+```yaml
+version: '2'
+services:
+  redis:
+    image: redis
+    restart: always
+
+  server: &base
+    build: .
+    restart: always
+    command: -s /app/setting.yml
+    volumes:
+      - ./setting/test.yml:/app/setting.yml
+      - ./log:/app/log
+
+  worker:
+    <<: *base
+    command: -s /app/setting.yml --worker
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
