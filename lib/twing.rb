@@ -60,6 +60,11 @@ class Twing
     EOF
   end
 
+  def pouring(tweet_id)
+    obj = rest_client.status(tweet_id)
+    delivery(obj)
+  end
+
   private
 
   def generate_logger
@@ -67,11 +72,6 @@ class Twing
     logger = Logger.new(logdev, datetime_format: LOGGER_FORMAT)
     logger.level = setting.debug ? Logger::DEBUG : Logger::INFO
     logger
-  end
-
-  def pouring(tweet_id)
-    obj = client.status(tweet_id)
-    delivery(obj)
   end
 
   def publish(data)
